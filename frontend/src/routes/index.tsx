@@ -4,22 +4,35 @@ import Dashboard from "../pages/dashboard/Dashboard"
 import UsersPage from "../pages/users/UsersPage"
 import Login from "../pages/auth/Login"
 import NotFound from "../pages/NotFound"
-export const  router = createBrowserRouter([
+import ProtectedRoute from "@/components/layout/ProtectedRoute"
+import {ProtectedRouteLogin} from "@/components/layout/ProtectedRoute"
+
+export const router = createBrowserRouter([
+  {
+    element: <ProtectedRouteLogin />, // Ruta protegida
+    children: [
     {
-        path: "/",
-        element: <AppLayout/>,
-        children: [
-            { index: true, element: <Dashboard /> },
-            { path: "users", element: <UsersPage /> },
-      
-    ],
-},
-{
     path: "/auth/login",
-    element: <Login/>
+    element: <Login />,
+  },
+],
 },
-{
+  {
+    element: <ProtectedRoute />, // Ruta protegida
+    children: [
+      {
+        path: "/",
+        element: <AppLayout />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "users", element: <UsersPage /> },
+          // otras rutas protegidas aquí
+        ],
+      },
+    ],
+  },
+  {
     path: "*",
-    element: <NotFound/>
-}
-])
+    element: <NotFound />,
+  },
+]);
