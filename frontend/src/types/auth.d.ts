@@ -9,3 +9,9 @@ export type AuthResponse = {
     refresh_token: string,
 
 }
+
+export type UserChangePassword = {
+    current_password: string,
+    new_password: string,
+    confirm_password: string,
+}

@@ -6,7 +6,7 @@ import Login from "../pages/auth/Login"
 import NotFound from "../pages/NotFound"
 import ProtectedRoute from "@/components/layout/ProtectedRoute"
 import {ProtectedRouteLogin} from "@/components/layout/ProtectedRoute"
-
+import ProfilePage from "@/pages/profile/ProfilePage"
 export const router = createBrowserRouter([
   {
     element: <ProtectedRouteLogin />, // Ruta protegida
@@ -26,6 +26,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Dashboard /> },
           { path: "users", element: <UsersPage /> },
+          { path: "profile", element:<ProfilePage/>},
           // otras rutas protegidas aquí
         ],
       },

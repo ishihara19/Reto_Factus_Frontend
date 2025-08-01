@@ -1,10 +1,23 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getToken } from "@/utils/token";
+import { useAuth } from "@/contexts/AuthContext";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function ProtectedRoute() {
-  const token = getToken();
+  const { isAuthenticated, isLoading } = useAuth();
 
-  if (!token) {
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/auth/login" replace />;
   }
   
@@ -12,9 +25,23 @@ export default function ProtectedRoute() {
 }
 
 export function ProtectedRouteLogin(){
-    const token = getToken();
-    if (token) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  // Mostrar loading mientras se verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
+  
   return <Outlet />;
 }

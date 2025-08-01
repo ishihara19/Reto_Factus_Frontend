@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   Menu, 
-  X, 
   Home, 
   Users, 
   Settings, 
@@ -14,13 +13,14 @@ import {
   LogOut,
   ChevronDown
 } from 'lucide-react';
-import {removeToken} from "@/utils/token";
+import { useAuth } from '@/contexts/AuthContext'; // Importar el hook
 
 const AppLayout: React.FC = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
+  const { user, logout } = useAuth(); // Usar el contexto
+  
   const menuItems = [
     { icon: Home, label: 'Dashboard', href: '/' },
     { icon: Users, label: 'Usuarios', href: '/users' },
@@ -29,16 +29,21 @@ const AppLayout: React.FC = () => {
     { icon: Settings, label: 'Configuración', href: '/settings' },
   ];
 
+  const handleLogout = () => {
+    logout();
+    setUserMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <div
         className={`bg-white shadow-lg transition-all duration-300 ${
-          sidebarOpen ? 'w-64' : 'w-16'
+          sidebarOpen ? 'w-64' : 'w-20'
         } flex flex-col`}
       >
         {/* Logo */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
@@ -80,10 +85,12 @@ const AppLayout: React.FC = () => {
             <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
               <User size={16} className="text-gray-600" />
             </div>
-            {sidebarOpen && (
+            {sidebarOpen && user && (
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-800">Admin User</p>
-                <p className="text-xs text-gray-500">admin@empresa.com</p>
+                <p className="text-sm font-medium text-gray-800">
+                  {user.username || 'Usuario'}
+                </p>
+                <p className="text-xs text-gray-500">{user.email}</p>
               </div>
             )}
           </div>
@@ -118,6 +125,13 @@ const AppLayout: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* User Welcome */}
+              {user && (
+                <span className="text-sm text-gray-600">
+                  Bienvenido, {user.username || user.email}
+                </span>
+              )}
+
               {/* Notifications */}
               <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
                 <Bell size={20} className="text-gray-600" />
@@ -141,7 +155,7 @@ const AppLayout: React.FC = () => {
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
                     <a
-                      href="#"
+                      href="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     >
                       Mi Perfil
@@ -153,14 +167,13 @@ const AppLayout: React.FC = () => {
                       Configuración
                     </a>
                     <hr className="my-1 border-gray-200" />
-                    <a
-                      href="/"
-                      onClick={removeToken}
-                      className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center space-x-2"
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 flex items-center space-x-2"
                     >
                       <LogOut size={16} />
                       <span>Cerrar Sesión</span>
-                    </a>
+                    </button>
                   </div>
                 )}
               </div>
